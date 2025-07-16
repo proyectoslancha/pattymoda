@@ -1,4 +1,4 @@
-// Aplicación principal con funcionalidad de recuperación de contraseña
+// Aplicación principal con sistema de roles y funcionalidad completa
 import React, { useState } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
@@ -11,6 +11,7 @@ import { CategoryList } from './components/categories/CategoryList';
 import { Reports } from './components/reports/Reports';
 import { Analytics } from './components/analytics/Analytics';
 import { Settings } from './components/settings/Settings';
+import { UserList } from './components/users/UserList';
 import { ForgotPassword } from './components/auth/ForgotPassword';
 import { ResetPassword } from './components/auth/ResetPassword';
 import { useAuthState } from './hooks/useAuth';
@@ -19,11 +20,11 @@ import { Button } from './components/ui/Button';
 import { Store, Mail, Lock } from 'lucide-react';
 
 function App() {
-  const { user, login, logout, isLoading, isAuthenticated } = useAuthState();
+  const { user, login, logout, isLoading, isAuthenticated, hasPermission } = useAuthState();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [email, setEmail] = useState('admin@dpattymoda.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
@@ -42,7 +43,24 @@ function App() {
     }
   };
 
+  const handleTabChange = (tab: string) => {
+    if (hasPermission(tab)) {
+      setActiveTab(tab);
+    }
+  };
+
   const renderContent = () => {
+    if (!hasPermission(activeTab)) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Acceso Denegado</h2>
+            <p className="text-gray-600">No tienes permisos para acceder a esta sección</p>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
@@ -62,6 +80,8 @@ function App() {
         return <Analytics />;
       case 'settings':
         return <Settings />;
+      case 'users':
+        return <UserList />;
       default:
         return <Dashboard />;
     }
@@ -144,6 +164,7 @@ function App() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   leftIcon={<Lock className="w-4 h-4 text-gray-400" />}
+                  showPasswordToggle={true}
                   required
                 />
 
@@ -173,7 +194,7 @@ function App() {
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-500">
-                  Demo: admin@dpattymoda.com / admin123
+                  Contacta al administrador para obtener acceso
                 </p>
               </div>
             </div>
@@ -191,14 +212,17 @@ function App() {
     <div className="flex h-screen bg-gray-50">
       <Sidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         isCollapsed={sidebarCollapsed}
+        userRole={user?.role || 'VENDEDOR'}
+        hasPermission={hasPermission}
       />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header
           onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
           onLogout={logout}
+          user={user}
         />
         
         <main className="flex-1 overflow-auto p-6">

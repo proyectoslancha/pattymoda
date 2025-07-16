@@ -59,12 +59,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/api/productos/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/api/categorias/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/api/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/api/reportes/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/api/configuracion/**").hasRole("ADMIN")
+                        
+                        // Super Admin - acceso total
+                        .requestMatchers("/api/**").hasRole("SUPER_ADMIN")
+                        
+                        // Admin - acceso casi total excepto configuración crítica
+                        .requestMatchers("/api/productos/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "VENDEDOR", "INVENTARIO")
+                        .requestMatchers("/api/categorias/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "INVENTARIO")
+                        .requestMatchers("/api/clientes/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "VENDEDOR", "CAJERO")
+                        .requestMatchers("/api/ventas/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "VENDEDOR", "CAJERO")
+                        .requestMatchers("/api/reportes/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "INVENTARIO")
+                        .requestMatchers("/api/usuarios/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                        .requestMatchers("/api/configuracion/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                        
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

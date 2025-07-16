@@ -1,4 +1,4 @@
-// Hook de autenticación actualizado
+// Hook de autenticación mejorado con roles
 import { useState, useEffect } from 'react';
 import { User } from '../types';
 import { AuthService } from '../services/authService';
@@ -26,7 +26,7 @@ export function useAuthState() {
           email: response.data.email,
           firstName: response.data.nombre.split(' ')[0],
           lastName: response.data.nombre.split(' ').slice(1).join(' ') || '',
-          role: response.data.rol as 'ADMIN' | 'EMPLOYEE' | 'CUSTOMER',
+          role: response.data.rol as 'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'VENDEDOR' | 'CAJERO' | 'INVENTARIO',
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -45,11 +45,28 @@ export function useAuthState() {
     setUser(null);
   };
 
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    
+    const rolePermissions: Record<string, string[]> = {
+      SUPER_ADMIN: ['*'],
+      ADMIN: ['dashboard', 'products', 'customers', 'sales', 'categories', 'reports', 'analytics', 'settings', 'users'],
+      MANAGER: ['dashboard', 'products', 'customers', 'sales', 'categories', 'reports', 'analytics'],
+      VENDEDOR: ['dashboard', 'products', 'customers', 'sales', 'new-sale'],
+      CAJERO: ['dashboard', 'sales', 'new-sale', 'customers'],
+      INVENTARIO: ['dashboard', 'products', 'categories', 'reports']
+    };
+    
+    const permissions = rolePermissions[user.role] || [];
+    return permissions.includes('*') || permissions.includes(permission);
+  };
+
   return {
     user,
     login,
     logout,
     isLoading,
     isAuthenticated: !!user,
+    hasPermission,
   };
 }

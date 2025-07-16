@@ -1,4 +1,4 @@
-// Sidebar de navegación
+// Sidebar de navegación con control de roles
 import React from 'react';
 import { 
   Home, 
@@ -10,7 +10,8 @@ import {
   Tag,
   Store,
   TrendingUp,
-  UserCircle
+  UserCircle,
+  UserCheck
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
@@ -18,6 +19,8 @@ interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   isCollapsed: boolean;
+  userRole: string;
+  hasPermission: (permission: string) => boolean;
 }
 
 const navigation = [
@@ -29,10 +32,22 @@ const navigation = [
   { id: 'categories', name: 'Categorías', icon: Tag },
   { id: 'reports', name: 'Reportes', icon: BarChart3 },
   { id: 'analytics', name: 'Analytics', icon: TrendingUp },
+  { id: 'users', name: 'Usuarios', icon: UserCheck },
   { id: 'settings', name: 'Configuración', icon: Settings },
 ];
 
-export function Sidebar({ activeTab, onTabChange, isCollapsed }: SidebarProps) {
+const roleDisplayNames: Record<string, string> = {
+  SUPER_ADMIN: 'Super Admin',
+  ADMIN: 'Administrador',
+  MANAGER: 'Gerente',
+  VENDEDOR: 'Vendedor',
+  CAJERO: 'Cajero',
+  INVENTARIO: 'Inventario'
+};
+
+export function Sidebar({ activeTab, onTabChange, isCollapsed, userRole, hasPermission }: SidebarProps) {
+  const filteredNavigation = navigation.filter(item => hasPermission(item.id));
+
   return (
     <aside className={cn(
       'bg-gradient-to-b from-gray-900 to-gray-800 text-white transition-all duration-300 flex flex-col',
@@ -57,7 +72,7 @@ export function Sidebar({ activeTab, onTabChange, isCollapsed }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-2">
-        {navigation.map((item) => {
+        {filteredNavigation.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
           
@@ -92,8 +107,12 @@ export function Sidebar({ activeTab, onTabChange, isCollapsed }: SidebarProps) {
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">Admin</p>
-              <p className="text-xs text-gray-400 truncate">admin@dpattymoda.com</p>
+              <p className="text-sm font-medium text-white truncate">
+                {roleDisplayNames[userRole] || userRole}
+              </p>
+              <p className="text-xs text-gray-400 truncate">
+                {userRole === 'SUPER_ADMIN' ? 'Acceso Total' : 'Acceso Limitado'}
+              </p>
             </div>
           )}
         </div>

@@ -1,10 +1,10 @@
-// Interfaces y tipos para el sistema DPattyModa
+// Interfaces y tipos actualizados para el sistema DPattyModa
 export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'ADMIN' | 'EMPLOYEE' | 'CUSTOMER';
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'VENDEDOR' | 'CAJERO' | 'INVENTARIO';
   avatar?: string;
   phone?: string;
   address?: string;
@@ -14,56 +14,58 @@ export interface User {
 
 export interface Product {
   id: string;
-  name: string;
-  description: string;
-  price: number;
-  cost: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  costo: number;
   sku: string;
-  category: Category;
-  brand: string;
-  sizes: Size[];
-  colors: Color[];
-  images: string[];
+  categoria: Category;
+  marca: string;
+  tallas: Size[];
+  colores: Color[];
+  imagenes: string[];
   stock: number;
-  minStock: number;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  stockMinimo: number;
+  activo: boolean;
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
 }
 
 export interface Category {
   id: string;
-  name: string;
-  description?: string;
+  nombre: string;
+  descripcion?: string;
   parentId?: string;
-  isActive: boolean;
+  activo: boolean;
 }
 
 export interface Size {
   id: string;
-  name: string;
-  order: number;
+  talla: string;
+  stockTalla: number;
 }
 
 export interface Color {
   id: string;
-  name: string;
-  hexCode: string;
+  color: string;
+  codigoHex: string;
+  stockColor: number;
 }
 
 export interface Customer {
   id: string;
-  firstName: string;
-  lastName: string;
+  nombre: string;
+  apellido: string;
   email: string;
-  phone: string;
-  address: string;
-  district: string;
-  city: string;
-  totalPurchases: number;
-  lastPurchase?: Date;
-  preferredPaymentMethod: string;
-  createdAt: Date;
+  telefono: string;
+  direccion: string;
+  distrito: string;
+  ciudad: string;
+  totalCompras: number;
+  ultimaCompra?: Date;
+  metodoPagoPreferido: string;
+  fechaCreacion: Date;
+  activo: boolean;
 }
 
 export interface Sale {
@@ -71,11 +73,11 @@ export interface Sale {
   customer: Customer;
   items: SaleItem[];
   subtotal: number;
-  tax: number;
-  discount: number;
+  impuesto: number;
+  descuento: number;
   total: number;
-  paymentMethod: 'CASH' | 'CARD' | 'TRANSFER' | 'YAPE' | 'PLIN';
-  status: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED';
+  paymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' | 'YAPE' | 'PLIN';
+  status: 'PENDIENTE' | 'PAGADA' | 'ANULADA';
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -85,9 +87,9 @@ export interface SaleItem {
   id: string;
   product: Product;
   quantity: number;
-  size: string;
+  talla: string;
   color: string;
-  unitPrice: number;
+  precioUnitario: number;
   subtotal: number;
 }
 
@@ -108,18 +110,18 @@ export interface ApiResponse<T> {
   status: number;
   timestamp: Date;
 }
-// Tipos para configuración de tienda y reportes
+
 export interface StoreConfig {
   id: string;
-  name: string;
-  address: string;
+  nombre: string;
+  direccion: string;
   logo?: string;
-  phone?: string;
+  telefono?: string;
   email?: string;
-  website?: string;
+  sitioWeb?: string;
   facebook?: string;
   instagram?: string;
-  schedule?: string;
+  horario?: string;
 }
 
 export interface SalesReport {
@@ -139,4 +141,28 @@ export interface ProductReport {
 export interface CustomerReport {
   topCustomers: Customer[];
   customerStats: Array<{ customer: string; purchases: number }>;
+}
+
+export interface Invoice {
+  id: string;
+  saleId: string;
+  type: 'BOLETA' | 'FACTURA';
+  serie: string;
+  numero: string;
+  fechaEmision: Date;
+  cliente: Customer;
+  items: SaleItem[];
+  subtotal: number;
+  igv: number;
+  total: number;
+  qrCode: string;
+  estado: 'EMITIDA' | 'ANULADA';
+}
+
+export interface PaymentMethod {
+  type: 'EFECTIVO' | 'TARJETA' | 'YAPE' | 'PLIN' | 'TRANSFERENCIA';
+  amount: number;
+  reference?: string;
+  cardType?: string;
+  cardLast4?: string;
 }

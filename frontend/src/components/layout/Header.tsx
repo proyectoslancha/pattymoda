@@ -1,4 +1,4 @@
-// Header principal mejorado con diseño premium
+// Header principal con información del usuario
 import React, { useState } from 'react';
 import { Bell, Search, Menu, LogOut, User, Settings, Sun, Moon, Zap } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -7,15 +7,24 @@ import { Input } from '../ui/Input';
 interface HeaderProps {
   onToggleSidebar: () => void;
   onLogout: () => void;
+  user: any;
 }
 
-export function Header({ onToggleSidebar, onLogout }: HeaderProps) {
+export function Header({ onToggleSidebar, onLogout, user }: HeaderProps) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notifications] = useState([
-    { id: 1, message: 'Stock bajo en Blusa Elegante', type: 'warning', time: '5 min' },
+    { id: 1, message: 'Stock bajo en productos', type: 'warning', time: '5 min' },
     { id: 2, message: 'Nueva venta registrada', type: 'success', time: '10 min' },
-    { id: 3, message: 'Cliente VIP registrado', type: 'info', time: '15 min' },
   ]);
+
+  const roleDisplayNames: Record<string, string> = {
+    SUPER_ADMIN: 'Super Administrador',
+    ADMIN: 'Administrador',
+    MANAGER: 'Gerente',
+    VENDEDOR: 'Vendedor',
+    CAJERO: 'Cajero',
+    INVENTARIO: 'Encargado de Inventario'
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
@@ -80,8 +89,12 @@ export function Header({ onToggleSidebar, onLogout }: HeaderProps) {
             {/* User Profile */}
             <div className="flex items-center space-x-3">
               <div className="hidden sm:block text-right">
-                <p className="text-sm font-medium text-gray-900">Admin DPattyModa</p>
-                <p className="text-xs text-gray-500">Pampa Hermosa, Loreto</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {roleDisplayNames[user?.role] || user?.role}
+                </p>
               </div>
               
               <div className="relative">
@@ -118,10 +131,10 @@ export function Header({ onToggleSidebar, onLogout }: HeaderProps) {
               <span className="text-sm text-gray-600">Sistema Online</span>
             </div>
             <div className="text-sm text-gray-600">
-              Ventas Hoy: <span className="font-bold text-green-600">S/ 1,250</span>
+              Usuario: <span className="font-bold text-yellow-600">{user?.firstName}</span>
             </div>
             <div className="text-sm text-gray-600">
-              Productos: <span className="font-bold text-blue-600">342</span>
+              Rol: <span className="font-bold text-blue-600">{roleDisplayNames[user?.role] || user?.role}</span>
             </div>
           </div>
           

@@ -40,6 +40,9 @@ public class Usuario implements UserDetails {
     @Column(name = "ultimo_intento_recuperacion")
     private LocalDateTime ultimoIntentoRecuperacion;
     
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+    
     // Constructors
     public Usuario() {
         this.fechaCreacion = LocalDateTime.now();
@@ -112,7 +115,34 @@ public class Usuario implements UserDetails {
     public LocalDateTime getUltimoIntentoRecuperacion() { return ultimoIntentoRecuperacion; }
     public void setUltimoIntentoRecuperacion(LocalDateTime ultimoIntentoRecuperacion) { this.ultimoIntentoRecuperacion = ultimoIntentoRecuperacion; }
     
+    public String getFotoPerfil() { return fotoPerfil; }
+    public void setFotoPerfil(String fotoPerfil) { this.fotoPerfil = fotoPerfil; }
+    
     public enum Rol {
-        ADMIN, VENDEDOR
+        SUPER_ADMIN("Super Administrador", new String[]{"*"}),
+        ADMIN("Administrador", new String[]{"dashboard", "products", "customers", "sales", "categories", "reports", "analytics", "settings", "users"}),
+        MANAGER("Gerente", new String[]{"dashboard", "products", "customers", "sales", "categories", "reports", "analytics"}),
+        VENDEDOR("Vendedor", new String[]{"dashboard", "products", "customers", "sales", "new-sale"}),
+        CAJERO("Cajero", new String[]{"dashboard", "sales", "new-sale", "customers"}),
+        INVENTARIO("Encargado de Inventario", new String[]{"dashboard", "products", "categories", "reports"});
+        
+        private final String displayName;
+        private final String[] permissions;
+        
+        Rol(String displayName, String[] permissions) {
+            this.displayName = displayName;
+            this.permissions = permissions;
+        }
+        
+        public String getDisplayName() { return displayName; }
+        public String[] getPermissions() { return permissions; }
+        
+        public boolean hasPermission(String permission) {
+            if (permissions[0].equals("*")) return true;
+            for (String p : permissions) {
+                if (p.equals(permission)) return true;
+            }
+            return false;
+        }
     }
 }
