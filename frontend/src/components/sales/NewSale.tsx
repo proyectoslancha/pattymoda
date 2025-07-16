@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { TaxService } from '../../services/taxService';
 
 interface Product {
   id: string;
@@ -36,6 +37,23 @@ export function NewSale() {
   ]);
   const [discount, setDiscount] = useState(0);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [igvConfig, setIgvConfig] = useState<any>(null);
+  const [applyTax, setApplyTax] = useState(true);
+
+  // Cargar configuración de IGV al inicializar
+  React.useEffect(() => {
+    loadIGVConfig();
+  }, []);
+
+  const loadIGVConfig = async () => {
+    try {
+      const response = await TaxService.getIGVConfig();
+      setIgvConfig(response.data);
+      setApplyTax(response.data?.activo || false);
+    } catch (error) {
+      console.error('Error loading IGV config:', error);
+    }
+  };
 
   // Productos simulados
   const products: Product[] = [
@@ -123,7 +141,8 @@ export function NewSale() {
   const subtotal = saleItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
   const discountAmount = (subtotal * discount) / 100;
   const afterDiscount = subtotal - discountAmount;
-  const tax = afterDiscount * 0.18;
+  const taxRate = (igvConfig?.activo && applyTax) ? (igvConfig.porcentaje / 100) : 0;
+  const tax = afterDiscount * taxRate;
   const total = afterDiscount + tax;
   const totalPaid = paymentMethods.reduce((acc, method) => acc + method.amount, 0);
   const change = totalPaid - total;
@@ -344,6 +363,54 @@ export function NewSale() {
             </CardContent>
           </Card>
 
+          {/* Configuración de Impuestos */}
+          {igvConfig && (
+            <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+              <CardHeader>
+                <CardTitle className="flex items-center text-indigo-800">
+                  <Calculator className="w-5 h-5 mr-2" />
+                  🧮 Configuración de Impuestos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-indigo-200">
+                    <div>
+                      <h4 className="font-medium text-indigo-900">
+                        {igvConfig.nombre} ({igvConfig.porcentaje}%)
+                      </h4>
+                      <p className="text-sm text-indigo-700">
+                        {igvConfig.activo ? 'Disponible para aplicar' : 'Desactivado en configuración'}
+                      </p>
+                    </div>
+                    {igvConfig.activo && (
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={applyTax}
+                          onChange={(e) => setApplyTax(e.target.checked)}
+                          className="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="ml-2 text-sm font-medium text-indigo-900">
+                          Aplicar a esta venta
+                        </span>
+                      </label>
+                    )}
+                  </div>
+                  
+                  {!igvConfig.activo && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Nota:</strong> El IGV está desactivado en la configuración del sistema. 
+                        Puedes activarlo desde Configuración → Impuestos.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Resumen */}
           <Card className="bg-gradient-to-br from-gray-50 to-slate-100 border-gray-300">
             <CardHeader>
@@ -362,7 +429,7 @@ export function NewSale() {
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>IGV (18%):</span>
+                  <span>{igvConfig?.nombre || 'IGV'} ({(taxRate * 100).toFixed(1)}%):</span>
                   <span className="font-bold">S/ {tax.toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-3">

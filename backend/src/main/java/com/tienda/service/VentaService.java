@@ -3,6 +3,7 @@ package com.tienda.service;
 import com.tienda.entity.*;
 import com.tienda.dto.VentaRequest;
 import com.tienda.repository.*;
+import com.tienda.service.ConfiguracionImpuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,9 @@ public class VentaService {
     
     @Autowired
     private ProductoRepository productoRepository;
+    
+    @Autowired
+    private ConfiguracionImpuestoService configuracionImpuestoService;
     
     public List<Venta> obtenerTodasLasVentas() {
         return ventaRepository.findAll();
@@ -54,6 +58,7 @@ public class VentaService {
         venta.setFecha(LocalDateTime.now());
         
         BigDecimal total = BigDecimal.ZERO;
+        BigDecimal subtotal = BigDecimal.ZERO;
         
         // Procesar cada producto
         for (VentaRequest.DetalleVentaRequest detalle : ventaRequest.getProductos()) {
@@ -67,13 +72,19 @@ public class VentaService {
             
             // Calcular subtotal
             BigDecimal subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(detalle.getCantidad()));
-            total = total.add(subtotal);
+            subtotal = subtotal.add(subtotalItem);
             
             // Actualizar stock
             producto.setStock(producto.getStock() - detalle.getCantidad());
             productoRepository.save(producto);
         }
         
+        // Calcular impuestos
+        BigDecimal impuesto = configuracionImpuestoService.calcularImpuesto(subtotal);
+        total = subtotal.add(impuesto);
+        
+        venta.setSubtotal(subtotal);
+        venta.setImpuesto(impuesto);
         venta.setPrecioTotal(total);
         venta = ventaRepository.save(venta);
         
