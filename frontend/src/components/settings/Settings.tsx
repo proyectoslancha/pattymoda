@@ -1,9 +1,10 @@
 // Módulo de configuración
 import React, { useState } from 'react';
-import { Save, Store, User, Bell, Shield, Palette, Database, Printer } from 'lucide-react';
+import { Save, Store, User, Bell, Shield, Palette, Database, Printer, Calculator } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { TaxSettings } from './TaxSettings';
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState('business');
@@ -19,6 +20,7 @@ export function Settings() {
   const settingsTabs = [
     { id: 'business', name: 'Negocio', icon: Store },
     { id: 'profile', name: 'Perfil', icon: User },
+    { id: 'taxes', name: 'Impuestos', icon: Calculator },
     { id: 'notifications', name: 'Notificaciones', icon: Bell },
     { id: 'security', name: 'Seguridad', icon: Shield },
     { id: 'appearance', name: 'Apariencia', icon: Palette },
@@ -87,14 +89,14 @@ export function Settings() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label="IGV (%)" defaultValue="18" type="number" />
-            <Input label="Moneda" defaultValue="PEN" />
+            <Input label="Moneda" defaultValue="PEN" disabled />
           </div>
           
-          <div className="flex items-center space-x-2">
-            <input type="checkbox" id="includeIgv" className="rounded" defaultChecked />
-            <label htmlFor="includeIgv" className="text-sm text-gray-700">
-              Incluir IGV en precios mostrados
-            </label>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-sm text-yellow-800">
+              <strong>Nota:</strong> La configuración detallada de impuestos se encuentra en la pestaña "Impuestos". 
+              Allí puedes activar/desactivar el IGV y configurar el porcentaje según tu región.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -248,6 +250,7 @@ export function Settings() {
     switch (activeTab) {
       case 'business': return renderBusinessSettings();
       case 'profile': return renderProfileSettings();
+      case 'taxes': return <TaxSettings />;
       case 'notifications': return renderNotificationSettings();
       case 'security': return renderSecuritySettings();
       case 'appearance': return renderAppearanceSettings();
