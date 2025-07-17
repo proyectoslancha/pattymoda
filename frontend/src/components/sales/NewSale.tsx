@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Minus, ShoppingCart, User, CreditCard, Calculator, Receipt } from 'lucide-react';
+import { Plus, Search, Minus, ShoppingCart, User, CreditCard, Calculator, Receipt, Package } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -228,6 +228,28 @@ export function NewSale() {
     setDiscount(0);
     
     alert('Venta registrada exitosamente');
+  };
+
+  const handleCreateCustomer = async () => {
+    const customerData = {
+      nombre: (document.getElementById('newCustomerName') as HTMLInputElement)?.value,
+      apellido: (document.getElementById('newCustomerLastName') as HTMLInputElement)?.value,
+      email: (document.getElementById('newCustomerEmail') as HTMLInputElement)?.value,
+      telefono: (document.getElementById('newCustomerPhone') as HTMLInputElement)?.value,
+      direccion: (document.getElementById('newCustomerAddress') as HTMLInputElement)?.value,
+      distrito: 'Pampa Hermosa',
+      ciudad: 'Pampa Hermosa'
+    };
+    
+    try {
+      const response = await CustomerService.createCustomer(customerData);
+      const newCustomer = response.data;
+      setSelectedCustomer(newCustomer);
+      setCustomers([...customers, newCustomer]);
+      setIsCustomerModalOpen(false);
+    } catch (error: any) {
+      alert('Error al crear cliente: ' + (error.message || 'Error desconocido'));
+    }
   };
 
   if (loading) {
@@ -506,8 +528,7 @@ export function NewSale() {
                         <input
                           type="checkbox"
                           checked={applyTax}
-                const handleCreateCustomer = async () => {
-                  const customerData = {
+                          onChange={(e) => setApplyTax(e.target.checked)}
                           className="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                         />
                         <span className="ml-2 text-sm font-medium text-indigo-900">
@@ -682,29 +703,7 @@ export function NewSale() {
             <Button variant="ghost" onClick={() => setIsCustomerModalOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={() => setIsCustomerModalOpen(false)} className="bg-gradient-to-r from-purple-500 to-pink-500">
-              const customerData = {
-                nombre: (document.getElementById('newCustomerName') as HTMLInputElement)?.value,
-                apellido: (document.getElementById('newCustomerLastName') as HTMLInputElement)?.value,
-                email: (document.getElementById('newCustomerEmail') as HTMLInputElement)?.value,
-                telefono: (document.getElementById('newCustomerPhone') as HTMLInputElement)?.value,
-                direccion: (document.getElementById('newCustomerAddress') as HTMLInputElement)?.value,
-                distrito: 'Pampa Hermosa',
-                ciudad: 'Pampa Hermosa'
-              };
-              
-              try {
-                const response = await CustomerService.createCustomer(customerData);
-                const newCustomer = response.data;
-                setSelectedCustomer(newCustomer);
-                setCustomers([...customers, newCustomer]);
-                setIsCustomerModalOpen(false);
-              } catch (error: any) {
-                    alert('Error al crear cliente: ' + (error.message || 'Error desconocido'));
-              }
-                };
-                handleCreateCustomer();
-              }}>
+            <Button onClick={handleCreateCustomer} className="bg-gradient-to-r from-purple-500 to-pink-500">
               ✅ Crear Cliente
             </Button>
           </div>
