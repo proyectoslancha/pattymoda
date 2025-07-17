@@ -1,5 +1,5 @@
 // Componente para solicitar recuperación de contraseña
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Mail, ArrowLeft, Send, CheckCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';

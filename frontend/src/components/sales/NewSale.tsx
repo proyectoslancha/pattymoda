@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Search, Minus, ShoppingCart, User, CreditCard, Calculator, Receipt, Package } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -57,7 +57,7 @@ export function NewSale() {
   const [loading, setLoading] = useState(true);
 
   // Cargar datos al inicializar
-  React.useEffect(() => {
+  useEffect(() => {
     loadIGVConfig();
     loadProducts();
     loadCustomers();

@@ -1,5 +1,5 @@
 // Componente para configuración de impuestos
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, Plus, Edit, Trash2, Calculator, ToggleLeft, ToggleRight, AlertCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';

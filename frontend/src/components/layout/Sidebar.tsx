@@ -1,5 +1,4 @@
 // Sidebar de navegación con control de roles
-import React from 'react';
 import { 
   Home, 
   Package, 

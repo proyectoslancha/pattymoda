@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   DollarSign, 
   Package, 
@@ -12,8 +12,7 @@ import {
 import { StatsCard } from './StatsCard';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { ProductService } from '../../services/productService';
-import { CustomerService } from '../../services/customerService';
+import { DashboardService } from '../../services/dashboardService';
 
 interface DashboardStats {
   totalProducts: number;

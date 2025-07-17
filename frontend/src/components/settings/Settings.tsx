@@ -1,5 +1,5 @@
 // Módulo de configuración
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Save, Store, User, Bell, Shield, Palette, Database, Printer, Calculator } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';

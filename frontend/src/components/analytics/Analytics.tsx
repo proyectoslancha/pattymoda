@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { TrendingUp, Users, Package, DollarSign, Target, BarChart3, PieChart, Activity, Zap, Star } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { SalesChart } from '../charts/SalesChart';
 import { CustomPieChart } from '../charts/PieChart';
 import { CustomBarChart } from '../charts/BarChart';
-import { ProductService } from '../../services/productService';
-import { CustomerService } from '../../services/customerService';
 import { AnalyticsService } from '../../services/analyticsService';
 
 export function Analytics() {
@@ -24,16 +21,16 @@ export function Analytics() {
     setLoading(true);
     try {
       const [kpisResponse, segmentsResponse, trendsResponse] = await Promise.all([
-        AnalyticsService.getKPIs(timeRange),
-        CustomerService.getCustomerSegments(),
-        AnalyticsService.getSalesTrends(timeRange)
+        AnalyticsService.getKPIs(),
+        AnalyticsService.getCustomerSegments(),
+        AnalyticsService.getSalesTrends(parseInt(timeRange.replace('d', '')))
       ]);
 
       setAnalyticsData({
-        kpiData: kpisResponse.kpiData.map((kpi: any) => ({
+        kpiData: kpisResponse.data.kpiData.map((kpi: any) => ({
           ...kpi,
         })),
-        customerSegments: segmentsResponse.customerSegments,
+        customerSegments: segmentsResponse.data.customerSegments,
         categoryData: [
           { name: 'Ropa Femenina', value: 45, color: '#FFD700' },
           { name: 'Ropa Masculina', value: 30, color: '#FFA500' },
@@ -44,7 +41,7 @@ export function Analytics() {
           { name: 'Online', value: 60, color: '#4F46E5' },
           { name: 'Tienda Física', value: 40, color: '#10B981' },
         ],
-        salesData: trendsResponse.salesData,
+        salesData: trendsResponse.data.salesData,
         productPerformance: [
           { category: 'Ropa Femenina', sales: 45, revenue: 15000, margin: 45, trend: 'up', emoji: '👚' },
           { category: 'Ropa Masculina', sales: 30, revenue: 12000, margin: 40, trend: 'up', emoji: '👔' },
@@ -89,10 +86,6 @@ export function Analytics() {
     { name: '17:00', value: 145 },
     { name: '18:00', value: 112 },
   ];
-
-  const customers = [];
-  const products = [];
-  const totalRevenue = 50000;
 
   if (loading) {
     return (

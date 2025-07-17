@@ -1,13 +1,13 @@
 // Componente Button reutilizable
-import React from 'react';
+import { ButtonHTMLAttributes } from 'react';
 import { cn } from '../../utils/cn';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  leftIcon?: JSX.Element;
+  rightIcon?: JSX.Element;
 }
 
 export function Button({

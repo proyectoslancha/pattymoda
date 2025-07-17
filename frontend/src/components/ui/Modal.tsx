@@ -1,5 +1,5 @@
 // Componente Modal reutilizable
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
@@ -7,7 +7,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children: React.ReactNode;
+  children: JSX.Element | JSX.Element[];
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 

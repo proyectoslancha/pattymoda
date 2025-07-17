@@ -1,13 +1,13 @@
 // Componente Input reutilizable con funcionalidad de mostrar/ocultar contraseña
-import React, { useState } from 'react';
+import { useState, InputHTMLAttributes } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  leftIcon?: JSX.Element;
+  rightIcon?: JSX.Element;
   showPasswordToggle?: boolean;
 }
 

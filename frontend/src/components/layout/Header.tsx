@@ -1,5 +1,5 @@
 // Header principal con información del usuario
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Bell, Search, Menu, LogOut, User, Settings, Sun, Moon, Zap } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';

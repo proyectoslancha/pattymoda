@@ -1,9 +1,8 @@
 // Componente Card reutilizable
-import React from 'react';
 import { cn } from '../../utils/cn';
 
 interface CardProps {
-  children: React.ReactNode;
+  children: JSX.Element | JSX.Element[];
   className?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
@@ -31,14 +30,14 @@ export function Card({ children, className, padding = 'md', hover = false }: Car
   );
 }
 
-export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
+export function CardHeader({ children, className }: { children: JSX.Element | JSX.Element[]; className?: string }) {
   return <div className={cn('mb-4', className)}>{children}</div>;
 }
 
-export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
+export function CardTitle({ children, className }: { children: JSX.Element | JSX.Element[] | string; className?: string }) {
   return <h3 className={cn('text-lg font-semibold text-gray-900', className)}>{children}</h3>;
 }
 
-export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
+export function CardContent({ children, className }: { children: JSX.Element | JSX.Element[]; className?: string }) {
   return <div className={cn(className)}>{children}</div>;
 }

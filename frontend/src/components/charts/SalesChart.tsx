@@ -1,5 +1,4 @@
 // Gráfico de ventas con Recharts
-import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 interface SalesChartProps {

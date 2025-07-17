@@ -29,7 +29,7 @@ public class DashboardService {
         // Estadísticas de productos
         long totalProducts = productoRepository.count();
         long activeProducts = productoRepository.findByActivoTrue().size();
-        List<Object> lowStockProducts = productoRepository.findProductosConStockBajo();
+        List<Producto> lowStockProducts = productoRepository.findProductosConStockBajo();
         
         // Estadísticas de clientes
         long totalCustomers = clienteRepository.count();
@@ -71,7 +71,7 @@ public class DashboardService {
         List<Map<String, Object>> activities = new ArrayList<>();
         
         // Productos con stock bajo
-        List<Object> lowStockProducts = productoRepository.findProductosConStockBajo();
+        List<Producto> lowStockProducts = productoRepository.findProductosConStockBajo();
         if (!lowStockProducts.isEmpty()) {
             Map<String, Object> stockActivity = new HashMap<>();
             stockActivity.put("type", "stock");

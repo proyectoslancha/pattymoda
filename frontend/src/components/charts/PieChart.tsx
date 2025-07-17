@@ -1,5 +1,4 @@
 // Gráfico circular para categorías y canales
-import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface CustomPieChartProps {
