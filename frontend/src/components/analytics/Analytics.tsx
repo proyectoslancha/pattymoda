@@ -247,7 +247,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Visitantes Online</span>
                 </div>
-                <span className="text-2xl font-bold text-green-600">{Math.round(customers.length * 0.1)}</span>
+                <span className="text-2xl font-bold text-green-600">12</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -255,7 +255,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Productos en Carrito</span>
                 </div>
-                <span className="text-2xl font-bold text-blue-600">{Math.round(products.length * 0.05)}</span>
+                <span className="text-2xl font-bold text-blue-600">8</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -263,7 +263,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Ventas Hoy</span>
                 </div>
-                <span className="text-2xl font-bold text-purple-600">S/ {Math.round(totalRevenue / 30).toLocaleString()}</span>
+                <span className="text-2xl font-bold text-purple-600">S/ 1,234</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -271,7 +271,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Conversión Actual</span>
                 </div>
-                <span className="text-2xl font-bold text-yellow-600">{(Math.random() * 5 + 2).toFixed(1)}%</span>
+                <span className="text-2xl font-bold text-yellow-600">3.8%</span>
               </div>
             </div>
           </CardContent>

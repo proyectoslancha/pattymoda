@@ -71,6 +71,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/reportes/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "INVENTARIO")
                         .requestMatchers("/api/usuarios/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
                         .requestMatchers("/api/configuracion/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                        .requestMatchers("/api/dashboard/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER", "VENDEDOR", "CAJERO", "INVENTARIO")
+                        .requestMatchers("/api/analytics/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER")
+                        .requestMatchers("/api/impuestos/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "MANAGER")
                         
                         .anyRequest().authenticated());
 

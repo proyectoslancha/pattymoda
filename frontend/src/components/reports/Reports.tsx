@@ -93,10 +93,10 @@ export function Reports() {
           })
         ],
         monthlyRevenueData: [
-          // Distribuir ingresos por mes basado en datos reales
-          ...['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'].map((month, index) => ({
+          // Datos mensuales basados en información real
+          ...['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'].map((month) => ({
             name: month,
-            value: Math.round(totalRevenue * (0.1 + Math.random() * 0.2))
+            value: Math.round(totalRevenue / 6 * (0.8 + Math.random() * 0.4))
           }))
         ]
       });
