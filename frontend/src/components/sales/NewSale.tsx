@@ -506,7 +506,8 @@ export function NewSale() {
                         <input
                           type="checkbox"
                           checked={applyTax}
-                          onChange={(e) => setApplyTax(e.target.checked)}
+                const handleCreateCustomer = async () => {
+                  const customerData = {
                           className="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                         />
                         <span className="ml-2 text-sm font-medium text-indigo-900">
@@ -670,12 +671,12 @@ export function NewSale() {
       >
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Nombre" placeholder="Nombre del cliente" />
-            <Input label="Apellido" placeholder="Apellido del cliente" />
+            <Input label="Nombre" placeholder="Nombre del cliente" id="newCustomerName" />
+            <Input label="Apellido" placeholder="Apellido del cliente" id="newCustomerLastName" />
           </div>
-          <Input label="Email" type="email" placeholder="cliente@email.com" />
-          <Input label="Teléfono" placeholder="+51 999 999 999" />
-          <Input label="Dirección" placeholder="Dirección completa" />
+          <Input label="Email" type="email" placeholder="cliente@email.com" id="newCustomerEmail" />
+          <Input label="Teléfono" placeholder="+51 999 999 999" id="newCustomerPhone" />
+          <Input label="Dirección" placeholder="Dirección completa" id="newCustomerAddress" />
           
           <div className="flex justify-end space-x-3 pt-6 border-t">
             <Button variant="ghost" onClick={() => setIsCustomerModalOpen(false)}>
@@ -699,7 +700,11 @@ export function NewSale() {
                 setCustomers([...customers, newCustomer]);
                 setIsCustomerModalOpen(false);
               } catch (error: any) {
+                    alert('Error al crear cliente: ' + (error.message || 'Error desconocido'));
               }
+                };
+                handleCreateCustomer();
+              }}>
               ✅ Crear Cliente
             </Button>
           </div>

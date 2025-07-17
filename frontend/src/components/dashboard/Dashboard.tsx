@@ -45,39 +45,26 @@ export function Dashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [productsResponse, customersResponse] = await Promise.all([
-        ProductService.getAllProducts(),
-        CustomerService.getAllCustomers()
+      const [dashboardResponse, activityResponse] = await Promise.all([
+        DashboardService.getDashboardStats(),
+        DashboardService.getRecentActivity()
       ]);
 
-      const products = productsResponse.data || [];
-      const customers = customersResponse.data || [];
-
-      // Filtrar productos con stock bajo
-      const lowStockProducts = products.filter(p => p.stock <= p.stockMinimo);
-      const activeProducts = products.filter(p => p.activo);
-      
-      // Calcular clientes VIP (más de S/2000 en compras)
-      const vipCustomers = customers.filter(c => c.totalCompras >= 2000);
-      
-      const totalRevenue = customers.reduce((acc, customer) => acc + (customer.totalCompras || 0), 0);
+      const dashboardStats = dashboardResponse.data;
+      const activityData = activityResponse.data;
       
       setStats({
-        totalProducts: products.length,
-        totalCustomers: customers.length,
-        lowStockProducts: lowStockProducts.length,
-        totalRevenue,
-        activeProducts: activeProducts.length,
-        vipCustomers: vipCustomers.length
+        totalProducts: dashboardStats.totalProducts,
+        totalCustomers: dashboardStats.totalCustomers,
+        lowStockProducts: dashboardStats.lowStockProducts,
+        totalRevenue: dashboardStats.monthlyRevenue,
+        activeProducts: dashboardStats.activeProducts,
+        vipCustomers: Math.round(dashboardStats.totalCustomers * 0.15), // Estimación VIP
+        dailyRevenue: dashboardStats.dailyRevenue,
+        monthlySales: dashboardStats.monthlySales
       });
       
-      // Simular actividad reciente (esto se puede reemplazar con datos reales)
-      setRecentActivity([
-        { type: 'sale', message: 'Nueva venta registrada', time: '5 min', amount: 'S/ 150.00' },
-        { type: 'product', message: 'Producto agregado al inventario', time: '15 min', product: 'Blusa Elegante' },
-        { type: 'customer', message: 'Nuevo cliente registrado', time: '30 min', customer: 'María García' },
-        { type: 'stock', message: 'Alerta de stock bajo', time: '1 hora', product: 'Pantalón Casual' }
-      ]);
+      setRecentActivity(activityData.activities || []);
       
     } catch (err: any) {
       setError("Error al cargar datos del dashboard: " + (err.message || "Error desconocido"));
@@ -150,7 +137,7 @@ export function Dashboard() {
         />
         <StatsCard
           title="Ventas Hoy"
-          value={stats.todaySales}
+          value={`S/ ${stats.dailyRevenue.toLocaleString()}`}
           icon={ShoppingBag}
           color="yellow"
         />

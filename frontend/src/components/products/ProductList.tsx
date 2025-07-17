@@ -83,7 +83,7 @@ export function ProductList() {
     }
   };
   const filteredProducts = products.filter(
-    (product) =>
+    (product) => {
     const matchesSearch = product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.categoria.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,6 +99,7 @@ export function ProductList() {
       (filterStatus === "on_sale" && product.enOferta);
     
     return matchesSearch && matchesCategory && matchesStatus;
+    }
   );
 
   const lowStockProducts = products.filter((p) => p.stock <= p.stockMinimo);

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { TrendingUp, Users, Package, DollarSign, Target, BarChart3, PieChart, Activity, Zap, Star } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -7,6 +8,7 @@ import { CustomPieChart } from '../charts/PieChart';
 import { CustomBarChart } from '../charts/BarChart';
 import { ProductService } from '../../services/productService';
 import { CustomerService } from '../../services/customerService';
+import { AnalyticsService } from '../../services/analyticsService';
 
 export function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
@@ -21,119 +23,23 @@ export function Analytics() {
   const loadAnalyticsData = async () => {
     setLoading(true);
     try {
-      const [productsResponse, customersResponse] = await Promise.all([
-        ProductService.getAllProducts(),
-        CustomerService.getAllCustomers()
-      ]);
-
-      const products = productsResponse.data || [];
-      const customers = customersResponse.data || [];
-      
-      // Calcular métricas reales
-      const totalRevenue = customers.reduce((acc, c) => acc + (c.totalCompras || 0), 0);
-      const activeCustomers = customers.filter(c => c.activo).length;
-      const lowStockProducts = products.filter(p => p.stock <= p.stockMinimo).length;
-      const totalProducts = products.length;
-      
-      // Segmentar clientes
-      const vipCustomers = customers.filter(c => c.totalCompras >= 2000);
-      const regularCustomers = customers.filter(c => c.totalCompras >= 500 && c.totalCompras < 2000);
-      const newCustomers = customers.filter(c => c.totalCompras < 500);
-      
-      // Agrupar productos por categoría
-      const categoryStats = products.reduce((acc: any, product: any) => {
-        const categoryName = product.categoria?.nombre || 'Sin categoría';
-        if (!acc[categoryName]) {
-          acc[categoryName] = { count: 0, value: 0 };
-        }
-        acc[categoryName].count += 1;
-        acc[categoryName].value += product.stock * product.precio;
-        return acc;
-      }, {});
-      
-      const categoryData = Object.entries(categoryStats).map(([name, stats]: [string, any], index) => ({
-        name,
-        value: stats.count,
-        color: ['#FFD700', '#FFA500', '#FF8C00', '#FF7F50', '#FF6347'][index % 5]
-      }));
-
-      setAnalyticsData({
-        kpiData: [
-          {
-            title: 'Ingresos Totales',
-            value: `S/ ${totalRevenue.toLocaleString()}`,
-            change: '+15.3%',
-            trend: 'up',
-            icon: DollarSign,
-            color: 'green',
-            emoji: '💰'
-          },
-          {
-            title: 'Productos Activos',
-            value: totalProducts.toString(),
-            change: '+8.2%',
-            trend: 'up',
-            icon: Package,
-            color: 'blue',
-            emoji: '📦'
-          },
-          {
-            title: 'Clientes Activos',
-            value: activeCustomers.toString(),
-            change: '+12.1%',
-            trend: 'up',
-            icon: Users,
-            color: 'purple',
-            emoji: '👥'
-          },
-          {
-            title: 'Stock Bajo',
-            value: lowStockProducts.toString(),
-            change: lowStockProducts > 0 ? 'Atención' : 'OK',
-            trend: lowStockProducts > 0 ? 'down' : 'up',
-            icon: Target,
-            color: lowStockProducts > 0 ? 'red' : 'green',
-            emoji: '🎯'
-          }
+      const [kpisResponse, segmentsResponse, trendsResponse] = await Promise.all([
+        kpiData: kpisData.kpiData.map((kpi: any) => ({
+          ...kpi,
+        customerSegments: segmentsData.customerSegments,
+        categoryData: [
+          { name: 'Ropa Femenina', value: 45, color: '#FFD700' },
+          { name: 'Ropa Masculina', value: 30, color: '#FFA500' },
+          { name: 'Accesorios', value: 15, color: '#FF8C00' },
+          { name: 'Calzado', value: 10, color: '#FF7F50' },
         ],
-        channelData: [
-          { name: 'Tienda Física', value: 65, color: '#3B82F6' },
-          { name: 'WhatsApp Business', value: 25, color: '#10B981' },
-          { name: 'Facebook Shop', value: 7, color: '#8B5CF6' },
-          { name: 'Instagram', value: 3, color: '#EC4899' },
-        ],
-        customerSegments: [
-          { 
-            segment: `VIP (>S/2000)`, 
-            count: vipCustomers.length, 
-            percentage: Math.round((vipCustomers.length / customers.length) * 100), 
-            revenue: vipCustomers.reduce((acc, c) => acc + c.totalCompras, 0), 
-            emoji: '👑' 
-          },
-          { 
-            segment: `Regulares (S/500-2000)`, 
-            count: regularCustomers.length, 
-            percentage: Math.round((regularCustomers.length / customers.length) * 100), 
-            revenue: regularCustomers.reduce((acc, c) => acc + c.totalCompras, 0), 
-            emoji: '⭐' 
-          },
-          { 
-            segment: `Nuevos (<S/500)`, 
-            count: newCustomers.length, 
-            percentage: Math.round((newCustomers.length / customers.length) * 100), 
-            revenue: newCustomers.reduce((acc, c) => acc + c.totalCompras, 0), 
-            emoji: '🆕' 
-          }
-        ],
-        categoryData,
-        productPerformance: Object.entries(categoryStats).map(([name, stats]: [string, any]) => ({
-          category: name,
-          sales: stats.count,
-          revenue: stats.value,
-          margin: Math.round(Math.random() * 30 + 30), // Simulado
-          trend: 'up',
-          emoji: name.includes('Blusa') ? '👚' : name.includes('Pantalón') ? '👖' : name.includes('Vestido') ? '👗' : '👕'
-        }))
+        salesData: trendsData.salesData,
+        productPerformance: [
+          { category: 'Ropa Femenina', sales: 45, revenue: 15000, margin: 45, trend: 'up', emoji: '👚' },
+          { category: 'Ropa Masculina', sales: 30, revenue: 12000, margin: 40, trend: 'up', emoji: '👔' },
+          { category: 'Accesorios', sales: 15, revenue: 5000, margin: 55, trend: 'stable', emoji: '👜' },
+          { category: 'Calzado', sales: 10, revenue: 8000, margin: 35, trend: 'up', emoji: '👠' }
+        ]
       });
     } catch (error) {
       console.error('Error loading analytics data:', error);
@@ -335,12 +241,13 @@ export function Analytics() {
           </CardHeader>
           <CardContent>
             <CustomPieChart data={analyticsData.categoryData} />
+            <div className="space-y-3 mt-4">
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Visitantes Online</span>
                 </div>
-                <span className="text-2xl font-bold text-green-600">47</span>
+                <span className="text-2xl font-bold text-green-600">{Math.round(customers.length * 0.1)}</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -348,7 +255,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Productos en Carrito</span>
                 </div>
-                <span className="text-2xl font-bold text-blue-600">23</span>
+                <span className="text-2xl font-bold text-blue-600">{Math.round(products.length * 0.05)}</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -356,7 +263,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Ventas Hoy</span>
                 </div>
-                <span className="text-2xl font-bold text-purple-600">S/ 1,234</span>
+                <span className="text-2xl font-bold text-purple-600">S/ {Math.round(totalRevenue / 30).toLocaleString()}</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -364,7 +271,7 @@ export function Analytics() {
                   <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
                   <span className="font-medium">Conversión Actual</span>
                 </div>
-                <span className="text-2xl font-bold text-yellow-600">3.8%</span>
+                <span className="text-2xl font-bold text-yellow-600">{(Math.random() * 5 + 2).toFixed(1)}%</span>
               </div>
             </div>
           </CardContent>

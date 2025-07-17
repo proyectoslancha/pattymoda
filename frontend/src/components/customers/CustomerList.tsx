@@ -67,7 +67,8 @@ export function CustomerList() {
   };
 
   const filteredCustomers = customers.filter(
-    const matchesSearch = `${customer.nombre} ${customer.apellido}`
+    (customer) => {
+      const matchesSearch = `${customer.nombre} ${customer.apellido}`
       `${customer.nombre} ${customer.apellido}`
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
@@ -82,6 +83,7 @@ export function CustomerList() {
       (filterType === "inactive" && !customer.activo);
     
     return matchesSearch && matchesFilter;
+    }
   );
   const getCustomerType = (customer: Customer) => {
     if (customer.totalCompras >= 2000) return "VIP";
